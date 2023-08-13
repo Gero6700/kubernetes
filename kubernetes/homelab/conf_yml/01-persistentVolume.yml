@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-homelab
+  labels:
+    app: homelab
+    owner: gero
+    name: pv-homelab
+spec:
+  storageClassName: microk8s-hostpath
+  # Exclusive to PVC
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/home/gero/kubernetes/homelab"

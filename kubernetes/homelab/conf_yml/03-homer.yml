@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: homelab-dashboard
+  labels:
+    app: homelab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: homelab
+      role: web
+  template:
+    metadata:
+      labels:
+        app: homelab
+        role: web
+    spec:
+      containers:
+      - name: homelab
+        image: b4bz/homer
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - name: web-content
+          mountPath: /www/assets
+        env:
+        - name: INIT_ASSETS
+          value: "1"
+      volumes:
+      - name: web-content
+        persistentVolumeClaim:
+          claimName: pvc-homelab
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: homelab-dashboard-lb
+spec:
+  type: LoadBalancer
+  selector:
+    app: homelab
+  loadBalancerIP: 10.12.0.200
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
